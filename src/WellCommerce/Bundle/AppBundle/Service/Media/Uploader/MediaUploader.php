@@ -66,14 +66,14 @@ final class MediaUploader implements MediaUploaderInterface
         $media->setExtension($file->guessClientExtension());
         $media->setMime($file->getClientMimeType());
         $media->setSize($file->getClientSize());
-        
+        $media->setTmpFile($file);
+
         $errors = $this->validatorHelper->validate($media);
         if (0 !== count($errors)) {
             throw new InvalidMediaException($errors);
         }
         
         $this->manager->createResource($media);
-        $file->move($this->getUploadDir($dir), $media->getPath());
         
         return $media;
     }

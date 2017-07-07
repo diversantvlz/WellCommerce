@@ -14,6 +14,7 @@ namespace WellCommerce\Bundle\AppBundle\Entity;
 
 use Knp\DoctrineBehaviors\Model\Blameable\Blameable;
 use Knp\DoctrineBehaviors\Model\Timestampable\Timestampable;
+use Symfony\Component\HttpFoundation\File\File;
 use WellCommerce\Bundle\CoreBundle\Doctrine\Behaviours\Identifiable;
 use WellCommerce\Bundle\CoreBundle\Entity\EntityInterface;
 
@@ -33,7 +34,13 @@ class Media implements EntityInterface
     protected $extension = '';
     protected $mime      = '';
     protected $size      = 0;
-    
+    protected $checksum  = null;
+
+    /**
+     * @var null|File
+     */
+    protected $tmpFile = null;
+
     public function getName(): string
     {
         return $this->name;
@@ -95,5 +102,27 @@ class Media implements EntityInterface
             $filename   = sha1($this->name);
             $this->path = sprintf('%s.%s', $filename, $this->getExtension());
         }
+    }
+
+    public function getChecksum()
+    {
+        return $this->checksum;
+    }
+
+    public function getTmpFile()
+    {
+        return $this->tmpFile;
+    }
+
+    public function setTmpFile(File $tmpFile)
+    {
+        if($tmpFile->isFile()){
+            $this->checksum = md5_file($tmpFile->getPathname());
+            $this->tmpFile = $tmpFile;
+        }
+    }
+
+    public function resetTmpFile(){
+        $this->tmpFile = null;
     }
 }

@@ -24,3 +24,9 @@ services:
     media.uploader:
         class: WellCommerce\Bundle\AppBundle\Service\Media\Uploader\MediaUploader
         arguments: ['@media.manager', '%kernel.root_dir%/../web/media', '@validator.helper']
+
+    media.doctrine.event_subscriber:
+        class: WellCommerce\Bundle\AppBundle\EventListener\MediaDoctrineEventSubscriber
+        arguments: ["@filesystem", '%kernel.root_dir%/../web/media/images/']
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
